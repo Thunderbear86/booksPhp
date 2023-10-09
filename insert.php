@@ -3,6 +3,11 @@ require "settings/init.php";
 
 if(!empty($_POST["data"])){
     $data = $_POST["data"];
+    $file = $_FILES;
+
+    if(!empty($file["coverImageURL"]["tmp_name"])){
+        move_uploaded_file($file["coverImageURL"]["tmp_name"], "uploads/" . basename($file["coverImageURL"]["name"]));
+    }
 
     $sql = "INSERT INTO books (bookName, bookText, bookPrice, author, publicationDate, isbn, genre, publisher, pageCount, rating, coverImageURL)
         VALUES(:bookName, :bookText, :bookPrice, :author, :publicationDate, :isbn, :genre, :publisher, :pageCount, :rating, :coverImageURL)";
@@ -18,7 +23,7 @@ if(!empty($_POST["data"])){
         ":publisher" => $data["publisher"],
         ":pageCount" => $data["pageCount"],
         ":rating" => $data["rating"],
-        ":coverImageURL" => $data["coverImageURL"] // Replace with the actual cover image URL
+        ":coverImageURL" => (!empty($file["coverImageURL"]["tmp_name"])) ? $file["coverImageURL"]["name"] : NULL,
     ];
 
     $db->sql($sql, $bind, false);
@@ -51,93 +56,100 @@ if(!empty($_POST["data"])){
 
 <body>
 
-<form method="post" action="insert.php">
-    <div class="row">
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <label for="bookName">Navn på bog</label>
-                <input class="form-control" type="text" name="data[bookName]" id="bookName" placeholder="" value="">
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <label for="bookPrice">Pris på bog</label>
-                <input class="form-control" type="number" step="0.1" name="data[bookPrice]" id="bookPrice" placeholder="" value="">
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <label for="bookText">Bogbeskrivelse</label>
-                <textarea class="form-control" name="data[bookText]" id="bookText"></textarea>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <label for="author">Forfatter(e)</label>
-                <input class="form-control" type="text" name="data[author]" id="author" placeholder="" value="">
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <label for="publicationDate">Udgivelsesdato</label>
-                <input class="form-control" type="datetime" name="data[publicationDate]" id="publicationDate" placeholder="" value="">
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <label for="isbn">ISBN13</label>
-                <input class="form-control" type="text" name="data[isbn]" id="isbn" placeholder="" value="">
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <label for="coverImageURL">Billede URL</label>
-                <input class="form-control" type="url" name=data"[coverImageURL]" id="coverImageURL" placeholder="" value="">
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <label for="genre">Genre</label>
-                <select class="form-control" name="data[genre]" id="genre">
-                    <option value="Skønlitteratur">Skønlitteratur</option>
-                    <option value="Faglitteratur">Faglitteratur</option>
-                    <option value="Krimi">Krimi</option>
-                    <option value="Thriller">Thriller</option>
-                    <option value="Science Fiction">Science Fiction</option>
-                    <option value="Fantasy">Fantasy</option>
-                    <option value="Romantik">Romantik</option>
-                    <option value="Biografi">Biografi</option>
-                    <option value="Gyser">Gyser</option>
-                    <option value="Ungdomslitteratur">Ungdomslitteratur</option>
-                    <option value="Børnebøger">Børnebøger</option>
-                    <option value="Videnskab">Videnskab</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <label for="publisher">Forlag</label>
-                <input class="form-control" type="text" name="data[publisher]" id="publisher" placeholder="" value="">
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <label for="pageCount">Antal sider</label>
-                <input class="form-control" type="number" name="data[pageCount]" id="pageCount" placeholder="" value="">
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <label for="rating">Bedømmelse</label>
-                <input class="form-control" type="decimal" name="data[rating]" id="rating" placeholder="" value="">
-            </div>
-        </div>
-        <div class="col-12 col-md-6 offset-md-6">
-            <button class="form-control btn btn-primary" type="submit" id="btnSubmit">Opret produkt</button>
-        </div>
-    </div>
-</form>
+<div class="container-fluid">
 
+    <form method="post" action="insert.php" enctype="multipart/form-data">
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="bookName" class="form-label">Navn på bog</label>
+                    <input class="form-control" type="text" name="data[bookName]" id="bookName" placeholder="" value="">
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="bookPrice" class="form-label">Pris på bog</label>
+                    <input class="form-control" type="number" step="0.1" name="data[bookPrice]" id="bookPrice"
+                           placeholder="" value="">
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="coverImageURL" class="form-label">Upload billede</label>
+                    <input class="form-control" type="file" name="coverImageURL" id="coverImageURL" placeholder=""
+                           value="">
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="bookText" class="form-label">Bogbeskrivelse</label>
+                    <textarea class="form-control" name="data[bookText]" id="bookText"></textarea>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="author" class="form-label">Forfatter(e)</label>
+                    <input class="form-control" type="text" name="data[author]" id="author" placeholder="" value="">
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="publicationDate" class="form-label">Udgivelsesdato</label>
+                    <input class="form-control" type="datetime" name="data[publicationDate]" id="publicationDate"
+                           placeholder="" value="">
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="isbn" class="form-label">ISBN13</label>
+                    <input class="form-control" type="text" name="data[isbn]" id="isbn" placeholder="" value="">
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="genre">Genre</label>
+                    <select class="form-control" name="data[genre]" id="genre">
+                        <option value="Skønlitteratur">Skønlitteratur</option>
+                        <option value="Faglitteratur">Faglitteratur</option>
+                        <option value="Krimi">Krimi</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="Science Fiction">Science Fiction</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Romantik">Romantik</option>
+                        <option value="Biografi">Biografi</option>
+                        <option value="Gyser">Gyser</option>
+                        <option value="Ungdomslitteratur">Ungdomslitteratur</option>
+                        <option value="Børnebøger">Børnebøger</option>
+                        <option value="Videnskab">Videnskab</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="publisher">Forlag</label>
+                    <input class="form-control" type="text" name="data[publisher]" id="publisher" placeholder=""
+                           value="">
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="pageCount">Antal sider</label>
+                    <input class="form-control" type="number" name="data[pageCount]" id="pageCount" placeholder=""
+                           value="">
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="rating">Bedømmelse</label>
+                    <input class="form-control" type="decimal" name="data[rating]" id="rating" placeholder="" value="">
+                </div>
+            </div>
+            <div class="col-12 col-md-6 offset-md-6">
+                <button class="form-control btn btn-primary" type="submit" id="btnSubmit">Opret produkt</button>
+            </div>
+        </div>
+    </form>
+</div>
 
 
 

@@ -29,18 +29,18 @@ $books = $db->sql("SELECT * FROM books");
         <?php foreach ($books as $book): ?>
             <div class="col-sm-12 col-md-4 col-lg-3">
                 <div class="card">
-                    <img src="<?php echo $book->coverImageURL; ?>" class="card-img-top" alt="Book Cover">
+                    <img src="uploads/<?php echo $book->coverImageURL; ?>" class="card-img-top" alt="Book Cover">
                     <div class="card-body">
                         <h5 class="card-title"><?php echo $book->bookName; ?></h5>
                         <p class="card-text"><?php echo $book->bookText; ?></p>
-                        <p class="card-text">Price: $<?php echo $book->bookPrice; ?></p>
-                        <p class="card-text">Author: <?php echo $book->author; ?></p>
-                        <p class="card-text">Publication Date: <?php echo $book->publicationDate; ?></p>
-                        <p class="card-text">ISBN: <?php echo $book->isbn; ?></p>
-                        <p class="card-text">Genre: <?php echo $book->genre; ?></p>
-                        <p class="card-text">Publisher: <?php echo $book->publisher; ?></p>
-                        <p class="card-text">Page Count: <?php echo $book->pageCount; ?></p>
-                        <p class="card-text">Rating: <?php echo $book->rating; ?></p>
+                        <p class="card-text"><span class="fw-bold">Pris:</span> kr. <?php echo number_format($book->bookPrice, 2, ',', '.'); ?></p>
+                        <p class="card-text"><span class="fw-bold">Forfatter:</span> <?php echo $book->author; ?></p>
+                        <p class="card-text"><span class="fw-bold">Udgivelses dato:</span> <?php echo date("d-m-Y", strtotime($book->publicationDate)); ?></p>
+                        <p class="card-text"><span class="fw-bold">ISBN13:</span> <?php echo $book->isbn; ?></p>
+                        <p class="card-text"><span class="fw-bold">Genre:</span> <?php echo $book->genre; ?></p>
+                        <p class="card-text"><span class="fw-bold">Forlag:</span> <?php echo $book->publisher; ?></p>
+                        <p class="card-text"><span class="fw-bold">Antal sider:</span> <?php echo $book->pageCount; ?></p>
+                        <p class="card-text"><span class="fw-bold">Bedømmelse:</span> <?php echo $book->rating; ?></p>
                     </div>
                 </div>
             </div>

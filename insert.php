@@ -9,15 +9,28 @@ if(!empty($_POST["data"])){
         move_uploaded_file($file["coverImageURL"]["tmp_name"], "uploads/" . basename($file["coverImageURL"]["name"]));
     }
 
+    // Parse the publication date and format it as YYYY-MM-DD
+    $publicationDate = DateTime::createFromFormat('d-m-Y', $data["publicationDate"]);
+    if ($publicationDate !== false) {
+        $publicationDate = $publicationDate->format('Y-m-d');
+    } else {
+        // Invalid date format, handle the error or set a default value
+        $publicationDate = null; // You can set a default date or handle the error as needed
+    }
+
+    // Ensure that bookPrice is formatted correctly
+    $bookPrice = floatval(str_replace(',', '.', $data["bookPrice"]));
+
+
     $sql = "INSERT INTO books (bookName, bookText, bookPrice, author, publicationDate, isbn, genre, publisher, pageCount, rating, coverImageURL)
         VALUES(:bookName, :bookText, :bookPrice, :author, :publicationDate, :isbn, :genre, :publisher, :pageCount, :rating, :coverImageURL)";
 
     $bind = [
         ":bookName" => $data["bookName"],
         ":bookText" => $data["bookText"],
-        ":bookPrice" => $data["bookPrice"],
+        ":bookPrice" => $bookPrice,
         ":author" => $data["author"],
-        ":publicationDate" => $data["publicationDate"],
+        ":publicationDate" => $publicationDate, // Use the formatted date
         ":isbn" => $data["isbn"],
         ":genre" => $data["genre"],
         ":publisher" => $data["publisher"],
@@ -31,6 +44,7 @@ if(!empty($_POST["data"])){
     echo "Produktet er nu indsat. <a href='insert.php'>Indsæt et produkt mere</a>";
     exit;
 }
+
 
 ?>
 
@@ -69,8 +83,8 @@ if(!empty($_POST["data"])){
             <div class="col-12 col-md-6">
                 <div class="form-group">
                     <label for="bookPrice" class="form-label">Pris på bog</label>
-                    <input class="form-control" type="number" step="0.1" name="data[bookPrice]" id="bookPrice"
-                           placeholder="" value="">
+                    <input class="form-control" type="text" name="data[bookPrice]" id="bookPrice" placeholder="" value="">
+
                 </div>
             </div>
             <div class="col-12">
@@ -95,8 +109,8 @@ if(!empty($_POST["data"])){
             <div class="col-12 col-md-6">
                 <div class="form-group">
                     <label for="publicationDate" class="form-label">Udgivelsesdato</label>
-                    <input class="form-control" type="datetime" name="data[publicationDate]" id="publicationDate"
-                           placeholder="" value="">
+                    <input class="form-control" type="text" name="data[publicationDate]" id="publicationDate" placeholder="DD-MM-ÅÅÅÅ" value="">
+
                 </div>
             </div>
             <div class="col-12">

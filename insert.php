@@ -1,11 +1,11 @@
 <?php
 require "settings/init.php";
 
-if(!empty($_POST["data"])){
+if (!empty($_POST["data"])) {
     $data = $_POST["data"];
     $file = $_FILES;
 
-    if(!empty($file["coverImageURL"]["tmp_name"])){
+    if (!empty($file["coverImageURL"]["tmp_name"])) {
         move_uploaded_file($file["coverImageURL"]["tmp_name"], "uploads/" . basename($file["coverImageURL"]["name"]));
     }
 
@@ -20,7 +20,6 @@ if(!empty($_POST["data"])){
 
     // Ensure that bookPrice is formatted correctly
     $bookPrice = floatval(str_replace(',', '.', $data["bookPrice"]));
-
 
     $sql = "INSERT INTO books (bookName, bookText, bookPrice, author, publicationDate, isbn, genre, publisher, pageCount, rating, coverImageURL)
         VALUES(:bookName, :bookText, :bookPrice, :author, :publicationDate, :isbn, :genre, :publisher, :pageCount, :rating, :coverImageURL)";
@@ -39,14 +38,32 @@ if(!empty($_POST["data"])){
         ":coverImageURL" => (!empty($file["coverImageURL"]["tmp_name"])) ? $file["coverImageURL"]["name"] : NULL,
     ];
 
+    // Insert the book into the database
     $db->sql($sql, $bind, false);
+
+    // Get the last inserted bookId
+    $lastInsertedBookId = $db->lastInsertId();
+
+    // Create the filename for the book detail page
+    $bookDetailPageFilename = "books/book_" . $lastInsertedBookId . ".php";
+
+    // Copy the template file to the new location
+    copy("book_detailed.php", $bookDetailPageFilename);
+
+    // Replace placeholders in the new file with actual content
+    $bookDetailContent = file_get_contents($bookDetailPageFilename);
+
+    // Replace placeholders with actual book details (if needed)
+    $bookDetailContent = str_replace('{{BOOK_ID}}', $lastInsertedBookId, $bookDetailContent);
+
+    // Save the modified content back to the file
+    file_put_contents($bookDetailPageFilename, $bookDetailContent);
 
     echo "Produktet er nu indsat. <a href='insert.php'>Indsæt et produkt mere</a>";
     exit;
 }
-
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="da">

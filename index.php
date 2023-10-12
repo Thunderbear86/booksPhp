@@ -27,9 +27,9 @@ $books = $db->sql("SELECT * FROM books");
 <div class="container">
     <div class="row m-4">
         <?php foreach ($books as $book): ?>
-            <div class="col-sm-12 col-md-4 col-lg-3">
+            <div class="col-sm-6 col-md-3 col-lg-3 g-4">
                 <div class="card">
-                    <a href="book_<?php echo $book->bookId; ?>.php">
+                    <a href="books/book_detail.php?bookId=<?php echo $book->bookId; ?>">
                         <img src="uploads/<?php echo $book->coverImageURL; ?>" class="card-img-top" alt="Book Cover">
                     </a>
                 </div>

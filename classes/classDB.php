@@ -75,9 +75,9 @@ class db {
                 throw new Exception("PDO prepare error");
             }
         }catch (Exception $e){
-	        if (CONFIG_LIVE == 0) {
+            if (CONFIG_LIVE == 0) {
                 die($e->getMessage());
-	        }
+            }
             exit;
         }
     }
@@ -94,7 +94,6 @@ class db {
         }catch (Exception $e){
             die($e->getMessage());
         }
-
     }
 
     /**
@@ -105,7 +104,7 @@ class db {
             $this->prepare_result->execute();
             return $this->prepare_result;
         }catch (Exception $e){
-            // Testmode viser fejl og sidste kørte SQL
+            // Test mode shows errors and the last executed SQL
             if (CONFIG_LIVE == "0") {
                 $output = "<strong>Error message: </strong>".$e->getMessage()."<br><br>";
                 $output .= "<strong>In file:</strong> ".$e->getFile().":".$e->getLine()."<br><br>";
@@ -117,6 +116,14 @@ class db {
             echo $output;
             exit;
         }
+    }
+
+    /**
+     * Get the last inserted auto-increment ID.
+     * @return string
+     */
+    public function lastInsertId() {
+        return $this->dbCon->lastInsertId();
     }
 
     public function sql($sql="", $binds=[], $select=true) {
@@ -135,11 +142,34 @@ class db {
                 $result[] = $row;
             }
             return $result;
-        }else{
+        } else {
             return $dbResult;
         }
-
     }
+    public function createBookPage($bookId) {
+        // Get the book data from the database
+        $bookData = $this->sql("SELECT * FROM books WHERE book_id = :bookId", [':bookId' => $bookId]);
 
+        // Check if the book data exists
+        if (!$bookData) {
+            return false; // Book not found
+        }
+
+        // Open the template file and read the contents into a string
+        $templateFile = 'books/book_detail.php';
+        $template = file_get_contents($templateFile);
+
+        // Replace the placeholder values in the template with the data from the database
+        $template = str_replace('{{bookName}}', $bookData[0]->title, $template);
+        $template = str_replace('{{bookAuthor}}', $bookData[0]->author, $template);
+        $template = str_replace('{{bookText}}', $bookData[0]->description, $template);
+
+        // Write the generated HTML to a new PHP file
+        $newPageFile = 'books/' . $bookId . '.php';
+        file_put_contents($newPageFile, $template);
+
+        return $newPageFile;
+    }
 }
+
 ?>

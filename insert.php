@@ -5,10 +5,6 @@ if (!empty($_POST["data"])) {
     $data = $_POST["data"];
     $file = $_FILES;
 
-    if (!empty($file["coverImageURL"]["tmp_name"])) {
-        move_uploaded_file($file["coverImageURL"]["tmp_name"], "uploads/" . basename($file["coverImageURL"]["name"]));
-    }
-
     // Parse the publication date and format it as YYYY-MM-DD
     $publicationDate = DateTime::createFromFormat('d-m-Y', $data["publicationDate"]);
     if ($publicationDate !== false) {
@@ -47,21 +43,40 @@ if (!empty($_POST["data"])) {
     // Create the filename for the book detail page
     $bookDetailPageFilename = "books/book_" . $lastInsertedBookId . ".php";
 
-    // Copy the template file to the new location
-    copy("book_detailed.php", $bookDetailPageFilename);
+// Copy the template file to the new location
+    $templateFilePath = "books/book_detail.php";
+    if (!file_exists($templateFilePath)) {
+        echo "Template file not found: $templateFilePath";
+        exit;
+    }
 
-    // Replace placeholders in the new file with actual content
+    $bookDetailPageFilename = "books/book_" . $lastInsertedBookId . ".php";
+    if (!copy($templateFilePath, $bookDetailPageFilename)) {
+        echo "Failed to copy the template file to the destination.";
+        exit;
+    }
+
+// Replace placeholders in the new file with actual content
     $bookDetailContent = file_get_contents($bookDetailPageFilename);
+    if ($bookDetailContent === false) {
+        echo "Failed to read the newly created file: $bookDetailPageFilename";
+        exit;
+    }
 
-    // Replace placeholders with actual book details (if needed)
+// Replace placeholders with actual book details (if needed)
     $bookDetailContent = str_replace('{{BOOK_ID}}', $lastInsertedBookId, $bookDetailContent);
 
-    // Save the modified content back to the file
-    file_put_contents($bookDetailPageFilename, $bookDetailContent);
+// Save the modified content back to the file
+    if (file_put_contents($bookDetailPageFilename, $bookDetailContent) === false) {
+        echo "Failed to write the modified content back to the file: $bookDetailPageFilename";
+        exit;
+    }
 
     echo "Produktet er nu indsat. <a href='insert.php'>Indsæt et produkt mere</a>";
     exit;
+
 }
+
 ?>
 
 
@@ -87,8 +102,14 @@ if (!empty($_POST["data"])) {
 
 <body>
 
-<div class="container-fluid">
+<header>
+    <?php include 'navbar.php' ?>
+</header>
 
+<div class="container-fluid form1 pt-3">
+    <div class="row">
+
+<div class="col">
     <form method="post" action="insert.php" enctype="multipart/form-data">
         <div class="row g-3">
             <div class="col-12 col-md-6">
@@ -176,13 +197,18 @@ if (!empty($_POST["data"])) {
                 </div>
             </div>
             <div class="col-12 col-md-6 offset-md-6">
-                <button class="form-control btn btn-primary" type="submit" id="btnSubmit">Opret produkt</button>
+                <button class="form-control btn btn-primary" type="submit" id="btnSubmit">Opret bog</button>
             </div>
         </div>
     </form>
 </div>
 
+    </div>
+</div>
 
+<!-- <footer class="pt-3">
+    <?php include 'footer.php' ?>
+</footer> -->
 
 <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 

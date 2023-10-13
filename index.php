@@ -28,9 +28,11 @@ $books = $db->sql("SELECT * FROM books");
     <div class="row m-4">
         <?php foreach ($books as $book): ?>
             <div class="col-sm-6 col-md-3 col-lg-3 g-4">
-                <div class="card">
+                <div class="card h-100">  <!-- Added h-100 to make full height of parent -->
                     <a href="books/book_detail.php?bookId=<?php echo $book->bookId; ?>">
-                        <img src="uploads/<?php echo $book->coverImageURL; ?>" class="card-img-top" alt="Book Cover">
+                        <div class="book-cover">  <!-- Image container -->
+                            <img src="uploads/<?php echo $book->coverImageURL; ?>" class="img-fluid" alt="Bogens forside">
+                        </div>
                     </a>
                 </div>
             </div>

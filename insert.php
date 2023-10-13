@@ -72,7 +72,7 @@ if (!empty($_POST["data"])) {
         exit;
     }
 
-    echo "Produktet er nu indsat. <a href='insert.php'>Indsæt et produkt mere</a>";
+    echo "Produktet er nu indsat. <a href='insert.php'>Indsæt et produkt mere</a> eller <a href='index.php'>gå til forsiden</a>.";
     exit;
 
 }
@@ -96,7 +96,9 @@ if (!empty($_POST["data"])) {
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script src="https://cdn.tiny.cloud/1/bqcqec3q48h6ukfz7c5dheheg8mf0g4iflqjsh92vtrn5efc/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://kit.fontawesome.com/ef424bfb92.js" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.tiny.cloud/1/ul8c9hibtyvcapqu9iwhikjy9z84erdw2bw40aq7kivxno5u/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
 </head>
 

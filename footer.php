@@ -14,4 +14,7 @@
         <a href="#" class="footer-links">Tilføj Bøger</a>
         <a href="#" class="footer-links">Kontakt Os</a>
     </div>
+
+        <p class="copyright">Copyright &copy; 2023 - Bogpedia</p>
+
 </footer>

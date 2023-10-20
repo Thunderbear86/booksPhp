@@ -163,3 +163,7 @@ nav a {
 	transform: translate(-50%, -50%);  /* Center the image */
 }
 
+.books .items .card-img-top {
+	height: 200px;
+	object-fit: cover;
+}

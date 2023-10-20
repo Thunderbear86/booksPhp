@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Kim",
+    "age": 25,
+    "image": "https://avatars.githubusercontent.com/u/25958027?v=4",
+    "job": "Web Developer",
+    "favoriteColors": ["red", "blue", "green"],
+    "hobbies": {
+      "coding": "good",
+      "reading": "bad",
+      "sleeping": "good"
+    }
+  }
+
+  {
+    "name": "Ole",
+    "age": 35,
+    "image": "https://avatars.githubusercontent.com/u/25958027?v=4",
+    "job": "Web Developer",
+    "favoriteColors": ["red", "blue", "green"],
+    "hobbies": {
+      "coding": "noob",
+      "reading": "bad",
+      "sleeping": "master"
+    }
+  }
+]

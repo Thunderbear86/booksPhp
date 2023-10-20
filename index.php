@@ -23,16 +23,33 @@ $books = $db->sql("SELECT * FROM books");
 <header>
     <?php include 'navbar.php' ?>
 </header>
+<div class="container">
+    <div class="books">
+        <div class="filter p-5">
+            <div class="row">
+                <div class="col-md-4 offset-md-4">
+                    <input type="search" class="form-control nameSearch" placeholder="Søg her">
+                </div>
+            </div>
+        </div>
+        <div class="items">
+
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <div class="row m-4">
         <?php foreach ($books as $book): ?>
             <div class="col-sm-6 col-md-3 col-lg-3 g-4">
-                <div class="card h-100">  <!-- Added h-100 to make full height of parent -->
+                <div class="card bg-dark h-100">  <!-- Added h-100 to make full height of parent -->
                     <a href="books/book_detail.php?bookId=<?php echo $book->bookId; ?>">
                         <div class="book-cover">  <!-- Image container -->
                             <img src="uploads/<?php echo $book->coverImageURL; ?>" class="img-fluid" alt="Bogens forside">
                         </div>
+                        <h5 class="card-title text-white"><?php echo $book->publisher?></h5>
+                        <p class="card-text text-white"><?php echo $book->rating?> af 5.0</p>
+                        <a href="books/book_detail.php?bookId=<?php echo $book->bookId; ?>" class="btn btn-dark text-white w-100">Læs mere</a>
                     </a>
                 </div>
             </div>
@@ -49,5 +66,8 @@ $books = $db->sql("SELECT * FROM books");
 <script type="module" src="js/main.js"></script>
 
 <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
 </body>
 </html>

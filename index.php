@@ -67,6 +67,7 @@ $books = $db->sql("SELECT * FROM books");
 
 <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
+<script type="module" src="js/search.js"></script>
 
 
 </body>

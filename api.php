@@ -1,12 +1,13 @@
 <?php
-    require "settings/init.php";
+require "settings/init.php";
 
-    $data = json_decode(file_get_contents("php://input"), true);
+// Fetch the data from POST request
+$nameSearch = isset($_POST["nameSearch"]) ? $_POST["nameSearch"] : null;
 
-    /*
-     * password skal udfyrldes og være Swordfish666
-     * namesearch: valgfrit
-      */
+/*
+ * password skal udfyrldes og være Swordfish666
+ * namesearch: valgfrit
+ */
 
 /*
 HTTP Status Codes:
@@ -24,29 +25,56 @@ Success Codes:
 204 - No Content: The server has fulfilled the request but there is no representation to return (i.e., the response is empty).
 */
 
-header('Content-Type: application/json, charset=utf-8');
+$sql = "SELECT * FROM books WHERE 1=1";
+$bind = [];
 
-    if ($data["password"] == "Swordfish666"){
+if (!empty($nameSearch)) {
+    $sql .= " AND (bookName LIKE :search OR author LIKE :search OR genre LIKE :search OR publisher LIKE :search)";
+    $bind[":search"] = '%' . $nameSearch . '%';  // Using LIKE with wildcard search
+}
 
-        $sql = "SELECT * FROM books WHERE 1=1";
-        $bind = [];
-
-        if (!empty($data["nameSearch"])) {
-            $sql .= $sql. " AND bookName = :bookName ";
-            $bind[":bookName"] = $data["nameSearch"];
-        }
-
-        $books = $db ->sql($sql, $bind);
-        header("HTTP/1.1 200 - OK");
-
-        echo json_encode($books);
-    }
-    else {
-
-        header("HTTP/1.1 401 Unauthorized");
-        $error["errorMessage"] = "Password is incorrect";
-        echo json_encode($error);
-
-
-    }
+$books = $db->sql($sql, $bind);
 ?>
+
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    <title>Search Results - Bogpidia</title>
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="css/styles.css" rel="stylesheet" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<div class="container">
+    <h1>Søgeresultat for: <?php echo htmlspecialchars($nameSearch); ?></h1>
+
+    <div class="row g-4">
+        <?php if (!empty($books)): ?>
+            <?php foreach ($books as $book): ?>
+                <div class="col-sm-12 col-md-4 col-lg-3">
+                    <div class="book-item">
+                        <img class="book-cover img-fluid" src="uploads/<?php echo htmlspecialchars($book->coverImageURL); ?>" alt="Cover of <?php echo htmlspecialchars($book->bookName); ?>">
+                        <h3><?php echo htmlspecialchars($book->bookName); ?></h3>
+                        <p><span class="fw-bold">Forfatter:</span> <?php echo htmlspecialchars($book->author); ?></p>
+                        <p><span class="fw-bold">Genre:</span> <?php echo htmlspecialchars($book->genre); ?></p>
+                        <p><span class="fw-bold">Forlag:</span> <?php echo htmlspecialchars($book->publisher); ?></p>
+                        <!-- Add other details as needed -->
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="col-12">
+                <p>Ingen resultater</p>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <a class="fw-bold mt-3 d-block" href="index.php">Til forsiden</a>
+</div>
+
+
+<script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

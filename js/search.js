@@ -1,22 +1,49 @@
-export function initializeSearch() {
-    $(document).ready(function() {
-        $('.nameSearch').on('input', function() {
-            filterBooks($(this).val().trim());
-        });
-    });
+$(document).ready(function() {
+    // Attach an input event handler to the input
+    $('.nameSearch').on('input', function() {
 
-    function filterBooks(query) {
-        if (!query) {
-            $(".col-sm-6.col-md-3.col-lg-3.g-4").show();
+        // Get the search term from the input
+        let searchTerm = $(this).val();
+
+        // Don't make an AJAX request for an empty search term
+        if (searchTerm.trim() === '') {
+            $('.items').empty(); // Clear any previous results
             return;
         }
 
-        $(".col-sm-6.col-md-3.col-lg-3.g-4").each(function() {
-            if ($(this).find('.card-title').text().toLowerCase().includes(query.toLowerCase())) {
-                $(this).show();
-            } else {
-                $(this).hide();
+        // Make an AJAX request to the PHP script
+        $.ajax({
+            type: "POST",
+            url: "api.php",
+            data: {
+                nameSearch: searchTerm,
+            },
+            dataType: "json",
+            success: function(response) {
+                // Display the search results when successful
+                displayResults(response);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle any errors
+                console.error("Error: " + textStatus + " " + errorThrown);
             }
         });
+    });
+
+    // Function to display the search results
+    function displayResults(data) {
+        let html = '';
+
+        data.forEach(book => {
+            html += `<div class="book">
+                        <h3>${book.bookName}</h3>
+                        <p>Author: ${book.author}</p>
+                        <p>Genre: ${book.genre}</p>
+                        <p>Publisher: ${book.publisher}</p>
+                        <!-- Add other details as needed -->
+                    </div>`;
+        });
+
+        $('.items').html(html);
     }
-}
+});

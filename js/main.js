@@ -1,9 +1,8 @@
 import initializeStickyNav from './stickynav.js';
+// import { initializeSearch } from './search.js';  // Comment out or remove this line
 
 // Initialize the StickyNav function
 initializeStickyNav();
 
-import { initializeSearch } from './search.js';
-
-// call the function
-initializeSearch();
+// Initialize the search function
+// initializeSearch();  // Comment out or remove this line
